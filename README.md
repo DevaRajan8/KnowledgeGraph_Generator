@@ -1,4 +1,4 @@
-# Programming Knowledge Graph Generator
+# Knowledge Graph Generator
 
 A tool to create a comprehensive knowledge graph of topics, concepts, and their relationships.
 
