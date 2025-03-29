@@ -1,0 +1,32 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+# Logs
+logs/
+*.log
+
+# IDE files
+.idea/
+.vscode/
+.ruff_cache
+
+# Program output
+output/
+lib/
+
+# User generated files
+.env
+
+# Custom prompt files
+.github/prompts
+
+# Data files
+chroma/
