@@ -6,7 +6,7 @@ A tool to create a comprehensive knowledge graph of topics, concepts, and their 
 
 This project fetches domain-specific data from multiple sources and combines them into a cohesive knowledge graph that can be used for:
 
-- Learning path generation
+- Learning path (Knowledge Graph) generation
 - Visualizing relationships between concepts
 - Educational content organization
 - Research on evolution and relationships
@@ -40,10 +40,10 @@ uv sync --reinstall
 Run the main script to generate the knowledge graph:
 
 ```bash
-python -m src.main.py --limit 10 --domain programming
+python -m src.main --domain programming --limit 10 --save-graph
 ```
 
-The output will be saved to the `output` directory with a timestamp in the filename.
+This will load the local JSON (or fetch from Wikidata if you add that logic), build a graph, and output a file like output/ with a timestamp/graph_programming_limit10.json.
 
 ## Data Structure
 
@@ -51,35 +51,57 @@ The generated knowledge graph JSON has the following structure:
 
 ```json
 {
-  "topics": [
+  "nodes": [
     {
-      "id": "Q2005",
-      "title": "Python",
-      "description": "high-level programming language",
-      "topic_type": "programming_language",
-      "properties": { ... },
-      "references": ["Q80228", "Q28865", ...],
-      "url": "https://en.wikipedia.org/wiki/Python_(programming_language)",
-      "summary": "",
-      "content": "",
-      "content_for_embedding": ""
-    }
-  ],
-  "edges": [
-    {
-      "source": "Q2005",
-      "target": "Q80228"
+      "id": "assembly language",
+      "type": "programming_language",
+      "properties": {
+        "wikidata_url": "http://www.wikidata.org/entity/Q165436",
+        "description": "any low-level programming language ...",
+        "url": "https://en.wikipedia.org/wiki/Assembly_language",
+        "summary": "In computer programming, assembly language ...",
+        "categories": [ ... ],
+        "content": "In computer programming, assembly language ...",
+        "sections": [],
+        "domain": "programming",
+        "relationship_properties": {
+          "subclass of": [ ... ],
+          "inception": [ ... ],
+          "instance of": [ ... ]
+        }
+      }
     },
+    {
+      "id": "ARexx",
+      "type": "programming_language",
+      "properties": { ... }
+    },
+    ...
   ],
-  "metadata": {
-    "generated_at": "2023-05-20 12:34:56",
-    "topic_count": 20,
-    "edge_count": 45
-  }
+  "relationships": [
+    {
+      "source": "assembly language",
+      "target": "low-level programming language",
+      "type": "subclass_of",
+      "properties": {}
+    },
+    {
+      "source": "assembly language",
+      "target": "programming language",
+      "type": "instance_of",
+      "properties": {}
+    },
+    ...
+  ]
 }
 ```
 
+## Graph Builder
+
+The graph builder (in src/knowledge_graph/graph_builder.py) takes the enriched topics and converts them into nodes and relationships. Each node includes all the topic details (e.g., URL, summary, content) merged into its properties, and relationships are created from selected nested properties (like "instance of", "subclass of", etc.). This module is automatically invoked by the main script.
+
 ## Configuration
 
-Add domain and queries in config.py and wikidata/queries.py.
-The `config.py` file contains the main configuration for the project, including the domain and the SPARQL queries to be used.
+config.py: Contains the main configuration for the project including database settings, API endpoints, domain configurations, and SPARQL queries.
+
+wikidata/queries.py: Contains SPARQL query templates and domain-specific query configurations
